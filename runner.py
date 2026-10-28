@@ -1,3 +1,4 @@
+#imported modules
 import pygame
 import random
 import os
@@ -9,6 +10,8 @@ pygame.init()
 #setting caption at the top of the pygame window
 pygame.display.set_caption("Runner") 
 #setting global variables + game window
+
+
 
 width, height = 1000, 800
 frames_per_second = 60
