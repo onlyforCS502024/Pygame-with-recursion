@@ -19,6 +19,36 @@ player_velocity = 5
 
 game_window = pygame.display.set_mode((width, height))
 
+#flipping a list of sprite images  for animations and moving the player from righ to left
+def flip_player(sprites):
+    #True -> flip in the x - direction
+    #False -> dont flip in the y - direction
+    return [pygame.transform.flip_player(sprite, True, False) for sprite in sprites]
+#function to load then slice then scale and organize sprite long image from a directory path
+def loading_player_image(dir1, dir2, width, height, direction = False):
+    #constructing the file path using path and join to look in the asset's folder 
+    path = join("assets", dir1, dir2)
+    images = [f for f in listdir(path) if isfile(join(path, f))]
+
+    
+    all_sprite_images = {}
+    for image in images:
+        sprite_image = pygame.image.laod(join(path, image)).convert.alpha()
+
+        sprites = []
+        for i in range(sprite_image.get_width()// width):
+            surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
+            rect = pygame.Rect(i * width, 0, width, height)
+            surface.blit(sprite_image, (0, 0), rect)
+            sprites.append(pygame.transform.scale2x(surface))
+        #for multi-dimensional animation
+        if direction:
+            all_sprite_images[image.replace(".png", "") + "_right"] = sprites
+            all_sprite_images[image.replace(".png", "") + "_left"] = flip_player(sprites)
+        else:
+            all_sprite_images[image.replace(".png", "")] = sprites
+            
+    return all_sprite_images 
 
 
 
