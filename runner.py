@@ -28,11 +28,13 @@ def flip_player(sprites):
 def loading_player_image(dir1, dir2, width, height, direction = False):
     #constructing the file path using path and join to look in the asset's folder 
     path = join("assets", dir1, dir2)
+    #get a list of all files inside that directory
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
-    
+    #dictionary to load all loaded sprite lsits with their animation names as keys
     all_sprite_images = {}
     for image in images:
+        #loading the full sprite sheet image with transparent bg through convert.alpha 
         sprite_image = pygame.image.laod(join(path, image)).convert.alpha()
 
         sprites = []
