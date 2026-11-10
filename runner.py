@@ -38,10 +38,15 @@ def loading_player_image(dir1, dir2, width, height, direction = False):
         sprite_image = pygame.image.laod(join(path, image)).convert.alpha()
 
         sprites = []
-        for i in range(sprite_image.get_width()// width):
+        #loops through the sprite long image with individual frame sizes 
+        for i in range(sprite_image.get_width()// width): #calculates individual frames sizes from the long sprite image
+            #creates an empty transparent surface for a single frame
             surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
+            #rectangle created  that shifts i*eidth crop the each sprite image from the strip
             rect = pygame.Rect(i * width, 0, width, height)
+            #blit copies that cropped sprite image into the surface canvas
             surface.blit(sprite_image, (0, 0), rect)
+            #doubling the size of the images for better quality 
             sprites.append(pygame.transform.scale2x(surface))
         #for multi-dimensional animation
         if direction:
