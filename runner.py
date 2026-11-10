@@ -11,7 +11,7 @@ pygame.init()
 pygame.display.set_caption("Runner") 
 #setting global variables + game window
 
-
+#blit: pygame's copy and paste command
 
 width, height = 1000, 800
 frames_per_second = 60
@@ -23,19 +23,20 @@ game_window = pygame.display.set_mode((width, height))
 def flip_player(sprites):
     #True -> flip in the x - direction
     #False -> dont flip in the y - direction
-    return [pygame.transform.flip_player(sprite, True, False) for sprite in sprites]
+    return [pygame.transform.flip(sprite, True, False) for sprite in sprites]
 #function to load then slice then scale and organize sprite long image from a directory path
 def loading_player_image(dir1, dir2, width, height, direction = False):
     #constructing the file path using path and join to look in the asset's folder 
     path = join("assets", dir1, dir2)
-    #get a list of all files inside that directory
+    #get a list of all files inside that directory meaning all the sprite images' names
+    #isfile checks if the file is a real file or a subfolder 
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
     #dictionary to load all loaded sprite lsits with their animation names as keys
     all_sprite_images = {}
     for image in images:
         #loading the full sprite sheet image with transparent bg through convert.alpha 
-        sprite_image = pygame.image.laod(join(path, image)).convert.alpha()
+        sprite_image = pygame.image.load(join(path, image)).convert_alpha()
 
         sprites = []
         #loops through the sprite long image with individual frame sizes 
@@ -63,6 +64,9 @@ def loading_player_image(dir1, dir2, width, height, direction = False):
 class Player(pygame.sprite.Sprite):
     player_colour= (0,0,255) #class variable
     gravity = 1 #like 9.8 acceleration in real life
+    SPRITES = loading_player_image("MainCharacters", "MaskDude", 32, 32, True)
+    animation_delay = 3
+
     def __init__(self, x, y, width_player, height_player):
         #rectangle box to hold the player image for perfect collisions
         self.rect = pygame.Rect(x,y,width_player,height_player)
@@ -102,9 +106,36 @@ class Player(pygame.sprite.Sprite):
         #updates the player's physical coordinates using the updated velocities 
         self.player_move(self.horizontal_velocity, self.vertical_velocity)
         self.falling_count += 1
+        #updating character's image for each frame 
+        self.updating_player_image()
+    #figures out which player image to display as to make the player seem like moving 
+    def updating_player_image(self):
+        #default sprite sheet
+        sprite_sheet = "idle"
+        #when moving animation type changes
+        if self.horizontal_velocity != 0:
+            sprite_sheet = "run"
+        #forms the dictionary key to load
+        sprite_sheet_name = sprite_sheet + "_" + self.direction 
+        #looks for the dictionary key and pulls out the entire list of images for that animation
+        sprites = self.SPRITES[sprite_sheet_name]
+        #update sprite images every few seconds to make it seem like its animation
+        #we dont change the images every frame instead delay it 
+        sprite_index = (self.animation_count // self.animation_delay) % len(sprites)
+        #selects specific image from the list and assigns it to self.sprite
+        self.sprite = sprites[sprite_index]
+        #keeping track of time 
+        self.animation_count += 1
+
+
+
+
+
     #drawing a temporary colored rectangle to hold the player
     def player_draw(self, player_window):
-        pygame.draw.rect(player_window, self.player_colour, self.rect)
+        #it draws the player image onto the game window at their exact cordinates 
+        player_window.blit(self.sprite, (self.rect.x, self.rect.y))
+        
 
 
 def setting_background(tile_block):
